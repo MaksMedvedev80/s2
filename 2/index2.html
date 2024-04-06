@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отзывы о товарах</title>
+    <style>
+        .product {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .reviews {
+            list-style: none;
+            padding: 0;
+        }
+        .reviews li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="products">
+        <!-- Тут будут отображаться товары и отзывы -->
+    </div>
+
+    <script>
+        // Массив с начальными данными
+        const initialData = [
+            {
+                id: Date.now(),
+                product: "Apple iPhone 13",
+                reviews: [
+                    { id: Date.now(), text: "Отличный телефон! Батарея держится долго." },
+                    { id: Date.now(), text: "Камера супер, фото выглядят просто потрясающе." }
+                ]
+            },
+            {
+                id: Date.now(),
+                product: "Samsung Galaxy Z Fold 3",
+                reviews: [
+                    { id: Date.now(), text: "Интересный дизайн, но дорогой." }
+                ]
+            },
+            {
+                id: Date.now(),
+                product: "Sony PlayStation 5",
+                reviews: [
+                    { id: Date.now(), text: "Люблю играть на PS5, графика на высоте." }
+                ]
+            }
+        ];
+
+        // Функция для добавления отзыва
+        function addReview(event, productId) {
+            event.preventDefault();
+            const form = event.target;
+            const reviewText = form.querySelector('input[type="text"]').value;
+            if (reviewText.length < 50 || reviewText.length > 500) {
+                alert("Длина отзыва должна быть от 50 до 500 символов.");
+                return;
+            }
+            const reviewId = Date.now(); // Генерируем уникальный id для отзыва
+            const productElement = document.querySelector(`.product[data-product-id="${productId}"]`);
+            const reviewsList = productElement.querySelector('.reviews');
+            // Создаем новый элемент списка для отзыва
+            const newReview = document.createElement('li');
+            newReview.setAttribute('data-review-id', reviewId);
+            newReview.textContent = reviewText;
+            // Добавляем новый отзыв в конец списка отзывов
+            reviewsList.appendChild(newReview);
+            // Очищаем поле для ввода отзыва после добавления
+            form.reset();
+        }
+
+        // Создаем элементы для каждого товара и отображаем их на странице
+        initialData.forEach(product => {
+            const productElement = document.createElement('div');
+            productElement.classList.add('product');
+            productElement.dataset.productId = product.id;
+
+            const productName = document.createElement('h2');
+            productName.textContent = product.product;
+            productElement.appendChild(productName);
+
+            const reviewsList = document.createElement('ul');
+            reviewsList.classList.add('reviews');
+            product.reviews.forEach(review => {
+                const reviewItem = document.createElement('li');
+                reviewItem.dataset.reviewId = review.id;
+                reviewItem.textContent = review.text;
+                reviewsList.appendChild(reviewItem);
+            });
+            productElement.appendChild(reviewsList);
+
+            const reviewForm = document.createElement('form');
+            reviewForm.addEventListener('submit', function(event) {
+                addReview(event, product.id);
+            });
+            const reviewInput = document.createElement('input');
+            reviewInput.type = 'text';
+            reviewInput.placeholder = 'Введите отзыв (от 50 до 500 символов)';
+            reviewInput.minLength = 50;
+            reviewInput.maxLength = 500;
+            reviewInput.required = true;
+            const submitButton = document.createElement('button');
+            submitButton.type = 'submit';
+            submitButton.textContent = 'Добавить отзыв';
+            reviewForm.appendChild(reviewInput);
+            reviewForm.appendChild(submitButton);
+            productElement.appendChild(reviewForm);
+
+            document.querySelector('.products').appendChild(productElement);
+        });
+    </script>
+</body>
+</html>
